@@ -23,19 +23,24 @@ main() {
 	}
 
 
- void mainMenu(인자로 추상버스 포인터받기){
+ void mainMenu(Bus* bus){
 	 while (true) {
 		int select;
 		 switch (select) {
 		 case 1:
 			 int busSelect;
 			 //변수 4개 선언 출발지, 도착지, 가는날짜, 조회할 등급
-			 //노선조회() 호출 // 위에서 선언한 네개 변수의 포인터를 매개변수로
+			 //노선조회(*, *, *, *) 호출 // 위에서 선언한 네개 변수의 포인터를 매개변수로
+
 
 			 //조회등급변수에 따른 버스목록 출력(){
 			 //선택한 조회등급에 따라서 해당 등급버스만 출력
 			 //for문으로 bus[i]->grade == "해당등급" 버스의 시간, 등급, 잔여석 출력
 			 //}
+			 
+		
+
+
 			 //원하는 버스 번호 입력하세요 : busSelect
 
 			 //bus[busSelect]->showSeat();
