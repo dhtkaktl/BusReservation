@@ -1,37 +1,71 @@
 #include<string>
+#include<iostream>
 using namespace std;
-class Bus{
+class Bus {
 
 protected:
-	string dep,arr;//출발시간 도착시간
+	string dep, arr;	//출발시간 도착시간
 	string grade;
-	int seatCount;
+	int seatCount;		// 잔여석
+	int totalSeats;		// 총 좌석 수
 public:
-	Bus(string dep){
+	Bus(string dep) {
 		this->dep = dep;
 	}
-	void decrease(){};
-	void increase(){};
-	void showSeat(){};
+	void decrease();
+	void increase();
+	void showSeat();
+	int getTotalSeats() { return totalSeats; }	// totalSeats 접근자
+	bool reserveSeat(int);						// 좌석번호를 인자로 받아 해당 좌석이 비어(0)있으면 1로 바꾸고 true를 리턴, 이미 매점된 자리면 false를 리턴 
 };
-class NormalBus:public Bus {
+class NormalBus :public Bus {
 	bool seatList[40] = { 0 }; //0 이 빈자리 좌석 예매 x, 1이 찬자리
 public:
-	NormalBus(string dep):Bus(dep){
+	NormalBus(string dep) :Bus(dep) {
 		grade = "일반고속";
 		seatCount = 40;
+		totalSeats = 40;
 	}
-	//decrease(){};// 1씩 감소 최소 0
-	//increase(){};// 1씩 증가 최대 40  
-	//showSeat(){};// 인덱스값으로 줄 구별 index%4==0이면 줄바꿈
+	void decrease() {
+		if (seatCount == 0) {
+			std::cout << "자리가 없습니다." << std::endl;
+			return;
+		}
+		seatCount--;
+	}// 1씩 감소 최소 0
+	void increase() {
+		if (seatCount == 40) {
+			std::cout << "최대 좌석수 초과" << std::endl;
+			return;
+		}
+		seatCount++;
+	}// 1씩 증가 최대 40  
+	void showSeat() {
+		system("cls");
+		std::cout << "일반 버스 자리" << std::endl;
+		for (int i = 0; i < 40; i = i + 4) {
+			std::cout << " -" << (i + 1) / 10 << (i + 1) % 10 << "-" << " -" << (i + 2) / 10 << (i + 2) % 10 << "-" << " -" << (i + 3) / 10 << (i + 3) % 10 << "-" << " -" << (i + 4) / 10 << (i + 4) % 10 << "-" << std::endl;
+			std::cout << " | " << seatList[i] << "| " << "| " << seatList[i + 1] << "| " << "| " << seatList[i + 2] << "| " << "| " << seatList[i + 3] << "|" << std::endl;
+			std::cout << " -------------------" << std::endl << std::endl;
+
+		}
+	}// 인덱스값으로 줄 구별 index%4==0이면 줄바꿈
+
 	//seat예시
 	/*-19- -20- -21-
 	  | 0| | 1| | 0|
 	  ---- ---- ----
-
-  	  -22- -23- -24-
+	  -22- -23- -24-
 	  | 0| | 1| | 0|
 	  ---- ---- ----*/
+	bool reserveSeat(int seatNum) {
+		if (seatList[seatNum] == 0) {	// 예매 가능할 경우
+			seatList[seatNum] = 1;		// 매석되었다는 뜻인 1로 바꾸고
+			return true;				// true 리턴
+		}
+		else							// 이미 예매된 자리(1)이면
+			return false;				// false 리턴
+	}
 };
 class HonorsBus :public Bus {
 	bool seatList[30] = { 0 }; //0 이 빈자리 좌석 예매 x, 1이 찬자리
@@ -39,10 +73,40 @@ public:
 	HonorsBus(string dep) :Bus(dep) {
 		grade = "우등고속";
 		seatCount = 30;
+		totalSeats = 30;
 	}
-	//decrease(){};// 1씩 감소 최소 0
-	//increase(){};// 1씩 증가 최대 40  
-	//showSeat(){};// 인덱스값으로 줄 구별 index%3==0이면 줄바꿈
+	void decrease() {
+		if (seatCount == 0) {
+			std::cout << "자리가 없습니다." << std::endl;
+			return;
+		}
+		seatCount--;
+	}// 1씩 감소 최소 0
+	void increase() {
+		if (seatCount == 30) {
+			std::cout << "최대 좌석수 초과" << std::endl;
+			return;
+		}
+		seatCount++;
+	};// 1씩 증가 최대 40  
+	void showSeat() {
+		system("cls");
+		std::cout << "일반 버스 자리" << std::endl;
+		for (int i = 0; i < 30; i = i + 3) {
+			std::cout << " -" << (i + 1) / 10 << (i + 1) % 10 << "-" << " -" << (i + 2) / 10 << (i + 2) % 10 << "-" << " -" << (i + 3) / 10 << (i + 3) % 10 << "-" << std::endl;
+			std::cout << " | " << seatList[i] << "| " << "| " << seatList[i + 1] << "| " << "| " << seatList[i + 2] << "| " << std::endl;
+			std::cout << " --------------" << std::endl << std::endl;
+
+		}
+	}// 인덱스값으로 줄 구별 index%3==0이면 줄바꿈
+	bool reserveSeat(int seatNum) {
+		if (seatList[seatNum] == 0) {	// 예매 가능할 경우
+			seatList[seatNum] = 1;		// 매석되었다는 뜻인 1로 바꾸고
+			return true;				// true 리턴
+		}
+		else							// 이미 예매된 자리(1)이면
+			return false;				// false 리턴
+	}
 };
 class PremiumBus :public Bus {
 	bool seatList[21] = { 0 }; //0 이 빈자리 좌석 예매 x, 1이 찬자리
@@ -50,8 +114,38 @@ public:
 	PremiumBus(string dep) :Bus(dep) {
 		grade = "프리미엄";
 		seatCount = 21;
+		totalSeats = 21;
 	}
-	//decrease(){};// 1씩 감소 최소 0
-	//increase(){};// 1씩 증가 최대 40  
-	//showSeat(){};// 인덱스값으로 줄 구별 index%4==0이면 줄바꿈
+	void decrease() {
+		if (seatCount == 0) {
+			std::cout << "자리가 없습니다." << std::endl;
+			return;
+		}
+		seatCount--;
+	}// 1씩 감소 최소 0
+	void increase() {
+		if (seatCount == 21) {
+			std::cout << "최대 좌석수 초과" << std::endl;
+			return;
+		}
+		seatCount++;
+	}// 1씩 증가 최대 40  
+	void showSeat() {
+		system("cls");
+		std::cout << "일반 버스 자리" << std::endl;
+		for (int i = 0; i < 21; i = i + 3) {
+			std::cout << " -" << (i + 1) / 10 << (i + 1) % 10 << "-" << " -" << (i + 2) / 10 << (i + 2) % 10 << "-" << " -" << (i + 3) / 10 << (i + 3) % 10 << "-" << std::endl;
+			std::cout << " | " << seatList[i] << "| " << "| " << seatList[i + 1] << "| " << "| " << seatList[i + 2] << "| " << std::endl;
+			std::cout << " --------------" << std::endl << std::endl;
+
+		}
+	}// 인덱스값으로 줄 구별 index%4==0이면 줄바꿈
+	bool reserveSeat(int seatNum) {
+		if (seatList[seatNum] == 0) {	// 예매 가능할 경우
+			seatList[seatNum] = 1;		// 매석되었다는 뜻인 1로 바꾸고
+			return true;				// true 리턴
+		}
+		else							// 이미 예매된 자리(1)이면
+			return false;				// false 리턴
+	}
 };
