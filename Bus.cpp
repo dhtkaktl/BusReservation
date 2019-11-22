@@ -1,15 +1,15 @@
-#include<string> // 2019-11-20 ìˆ˜ìš”ì¼ ì˜¤í›„ 10:30 ê³½ë¯¼í˜•
+#include<string> // 2019-11-22 ±İ ¿ÀÀü 11:30 LINK ¿À·ù ÇØ°á ¹öÀü
 #include<iostream>
 
-using namespace std; 
+using namespace std;
 
 class Bus {
 protected:
-	string dep, arr;	// ì¶œë°œì‹œê°„, ë„ì°©ì‹œê°„
-	string grade;	// ë“±ê¸‰
-	string date;	// ë‚ ì§œ
-	int seatCount;	// ì”ì—¬ì„
-	int totalSeats;	// ì´ ì¢Œì„ ìˆ˜
+	string dep, arr;// Ãâ¹ß½Ã°£, µµÂø½Ã°£
+	string grade;	// µî±Ş
+	string date;	// ³¯Â¥
+	int seatCount;	// ÀÜ¿©¼®
+	int totalSeats;	// ÃÑ ÁÂ¼® ¼ö
 public:
 	Bus(string dep) {
 		this->dep = dep;
@@ -18,46 +18,47 @@ public:
 		this->dep = dep;
 		this->date = date;
 	}
-	void decrease();	// decrease, increaseëŠ” ì—†ì–´ì ¸ì•¼
-	void increase();
-	int showSeat();	// ì¢Œì„ë°°ì¹˜ë„ ì¶œë ¥
-	int getSeatCount() { return seatCount; } // ì”ì—¬ì„ ì ‘ê·¼
-	int getTotalSeats() { return totalSeats; } // ì´ ì¢Œì„ ìˆ˜ ì ‘ê·¼
+	virtual void decrease() {}	// decrease¿Í increase´Â ÃßÈÄ »èÁ¦ ¿¹Á¤ (reserveSeatÀ¸·Î Èí¼ö)
+	virtual void increase() {}
+	virtual int showSeat() { return 0; }	// ÁÂ¼® Ãâ·ÂÇÔ¼ö - ½ÇÁ¦ ±¸ÇöÀº ÀÚ½Ä Å¬·¡½º¿¡¼­
+	int getSeatCount() { return seatCount; }	// ÀÜ¿©¼® Á¢±ÙÀÚ
+	int getTotalSeats() { return totalSeats; }	// ÃÑ ÁÂ¼® ¼ö Á¢±ÙÀÚ
 	string getDep() { return dep; }
 	string getArr() { return arr; }
 	string getGrade() { return grade; }
-	bool reserveSeat(int);						// ì¢Œì„ë²ˆí˜¸ë¥¼ ì¸ìë¡œ ë°›ì•„ í•´ë‹¹ ì¢Œì„ì´ ë¹„ì–´(0)ìˆìœ¼ë©´ 1ë¡œ ë°”ê¾¸ê³  trueë¥¼ ë¦¬í„´, ì´ë¯¸ ë§¤ì ëœ ìë¦¬ë©´ falseë¥¼ ë¦¬í„´ 
+	virtual bool reserveSeat(int x) { return 0; } // ÁÂ¼®¿¹¸Å ÇÔ¼ö - ½ÇÁ¦ ±¸ÇöÀº ÀÚ½Ä Å¬·¡½º¿¡¼­
+	// ÁÂ¼®¹øÈ£¸¦ ÀÎÀÚ·Î ¹Ş¾Æ ÇØ´ç ÁÂ¼®ÀÌ ºñ¾î(0)ÀÖÀ¸¸é 1·Î ¹Ù²Ù°í true¸¦, ÀÌ¹Ì ¸ÅÁ¡µÈ ÀÚ¸®¸é false ¸®ÅÏ
 };
 class NormalBus :public Bus {
-	bool seatList[40] = { 0 }; //0 ì´ ë¹ˆìë¦¬ ì¢Œì„ ì˜ˆë§¤ x, 1ì´ ì°¬ìë¦¬
+	bool seatList[40] = { 0 }; // 0ÀÌ ºóÀÚ¸®, 1ÀÌ ÂùÀÚ¸®
 public:
 	NormalBus(string dep) :Bus(dep) {
-		grade = "ì¼ë°˜ê³ ì†";
+		grade = "ÀÏ¹İ°í¼Ó";
 		seatCount = 40;
 		totalSeats = 40;
 	}
 	NormalBus(string dep, string date) :Bus(dep, date) {
-		grade = "ì¼ë°˜ê³ ì†";
+		grade = "ÀÏ¹İ°í¼Ó";
 		seatCount = 40;
 		totalSeats = 40;
 	}
 	void decrease() {
 		if (seatCount == 0) {
-			std::cout << "ìë¦¬ê°€ ì—†ìŠµë‹ˆë‹¤." << std::endl;
+			std::cout << "ÀÚ¸®°¡ ¾ø½À´Ï´Ù." << std::endl;
 			return;
 		}
 		seatCount--;
-	}// 1ì”© ê°ì†Œ ìµœì†Œ 0
+	}// 1¾¿ °¨¼Ò ÃÖ¼Ò 0
 	void increase() {
 		if (seatCount == 40) {
-			std::cout << "ìµœëŒ€ ì¢Œì„ìˆ˜ ì´ˆê³¼" << std::endl;
+			std::cout << "ÃÖ´ë ÁÂ¼®¼ö ÃÊ°ú" << std::endl;
 			return;
 		}
 		seatCount++;
-	}// 1ì”© ì¦ê°€ ìµœëŒ€ 40  
+	}// 1¾¿ Áõ°¡ ÃÖ´ë 40  
 	int showSeat() {
 		system("cls");
-		std::cout << "ì¼ë°˜ ë²„ìŠ¤ ìë¦¬" << std::endl;
+		std::cout << "ÀÏ¹İ ¹ö½º ÀÚ¸®" << std::endl;
 		for (int i = 0; i < 40; i = i + 4) {
 			std::cout << " -" << (i + 1) / 10 << (i + 1) % 10 << "-" << " -" << (i + 2) / 10 << (i + 2) % 10 << "-" << " -" << (i + 3) / 10 << (i + 3) % 10 << "-" << " -" << (i + 4) / 10 << (i + 4) % 10 << "-" << std::endl;
 			std::cout << " | " << seatList[i] << "| " << "| " << seatList[i + 1] << "| " << "| " << seatList[i + 2] << "| " << "| " << seatList[i + 3] << "|" << std::endl;
@@ -67,44 +68,44 @@ public:
 		return 0;
 	}
 	bool reserveSeat(int seatNum) {
-		if (seatList[seatNum] == 0) {	// ì˜ˆë§¤ ê°€ëŠ¥í•  ê²½ìš°
-			seatList[seatNum] = 1;		// ë§¤ì„ë˜ì—ˆë‹¤ëŠ” ëœ»ì¸ 1ë¡œ ë°”ê¾¸ê³ 
-			return true;				// true ë¦¬í„´
+		if (seatList[seatNum] == 0) {	// ¿¹¸Å °¡´ÉÇÒ °æ¿ì
+			seatList[seatNum] = 1;		// ¸Å¼®µÇ¾ú´Ù´Â ¶æÀÎ 1·Î ¹Ù²Ù°í
+			return true;				// true ¸®ÅÏ
 		}
-		else							// ì´ë¯¸ ì˜ˆë§¤ëœ ìë¦¬(1)ì´ë©´
-			return false;				// false ë¦¬í„´
+		else							// ÀÌ¹Ì ¿¹¸ÅµÈ ÀÚ¸®(1)ÀÌ¸é
+			return false;				// false ¸®ÅÏ
 	}
 };
 class HonorsBus :public Bus {
-	bool seatList[30] = { 0 }; //0 ì´ ë¹ˆìë¦¬ ì¢Œì„ ì˜ˆë§¤ x, 1ì´ ì°¬ìë¦¬
+	bool seatList[30] = { 0 }; //0 ÀÌ ºóÀÚ¸® ÁÂ¼® ¿¹¸Å x, 1ÀÌ ÂùÀÚ¸®
 public:
 	HonorsBus(string dep) :Bus(dep) {
-		grade = "ìš°ë“±ê³ ì†";
+		grade = "¿ìµî°í¼Ó";
 		seatCount = 30;
 		totalSeats = 30;
 	}
 	HonorsBus(string dep, string date) :Bus(dep, date) {
-		grade = "ìš°ë“±ê³ ì†";
+		grade = "¿ìµî°í¼Ó";
 		seatCount = 30;
 		totalSeats = 30;
 	}
 	void decrease() {
 		if (seatCount == 0) {
-			std::cout << "ìë¦¬ê°€ ì—†ìŠµë‹ˆë‹¤." << std::endl;
+			std::cout << "ÀÚ¸®°¡ ¾ø½À´Ï´Ù." << std::endl;
 			return;
 		}
 		seatCount--;
-	}// 1ì”© ê°ì†Œ ìµœì†Œ 0
+	}// 1¾¿ °¨¼Ò ÃÖ¼Ò 0
 	void increase() {
 		if (seatCount == 30) {
-			std::cout << "ìµœëŒ€ ì¢Œì„ìˆ˜ ì´ˆê³¼" << std::endl;
+			std::cout << "ÃÖ´ë ÁÂ¼®¼ö ÃÊ°ú" << std::endl;
 			return;
 		}
 		seatCount++;
-	};// 1ì”© ì¦ê°€ ìµœëŒ€ 40  
+	};// 1¾¿ Áõ°¡ ÃÖ´ë 40  
 	int showSeat() {
 		system("cls");
-		std::cout << "ì¼ë°˜ ë²„ìŠ¤ ìë¦¬" << std::endl;
+		std::cout << "ÀÏ¹İ ¹ö½º ÀÚ¸®" << std::endl;
 		for (int i = 0; i < 30; i = i + 3) {
 			std::cout << " -" << (i + 1) / 10 << (i + 1) % 10 << "-" << " -" << (i + 2) / 10 << (i + 2) % 10 << "-" << " -" << (i + 3) / 10 << (i + 3) % 10 << "-" << std::endl;
 			std::cout << " | " << seatList[i] << "| " << "| " << seatList[i + 1] << "| " << "| " << seatList[i + 2] << "| " << std::endl;
@@ -112,46 +113,46 @@ public:
 
 		}
 		return 0;
-	}// ì¸ë±ìŠ¤ê°’ìœ¼ë¡œ ì¤„ êµ¬ë³„ index%3==0ì´ë©´ ì¤„ë°”ê¿ˆ
+	}// ÀÎµ¦½º°ªÀ¸·Î ÁÙ ±¸º° index%3==0ÀÌ¸é ÁÙ¹Ù²Ş
 	bool reserveSeat(int seatNum) {
-		if (seatList[seatNum] == 0) {	// ì˜ˆë§¤ ê°€ëŠ¥í•  ê²½ìš°
-			seatList[seatNum] = 1;		// ë§¤ì„ë˜ì—ˆë‹¤ëŠ” ëœ»ì¸ 1ë¡œ ë°”ê¾¸ê³ 
-			return true;				// true ë¦¬í„´
+		if (seatList[seatNum] == 0) {	// ¿¹¸Å °¡´ÉÇÒ °æ¿ì
+			seatList[seatNum] = 1;		// ¸Å¼®µÇ¾ú´Ù´Â ¶æÀÎ 1·Î ¹Ù²Ù°í
+			return true;				// true ¸®ÅÏ
 		}
-		else							// ì´ë¯¸ ì˜ˆë§¤ëœ ìë¦¬(1)ì´ë©´
-			return false;				// false ë¦¬í„´
+		else							// ÀÌ¹Ì ¿¹¸ÅµÈ ÀÚ¸®(1)ÀÌ¸é
+			return false;				// false ¸®ÅÏ
 	}
 };
 class PremiumBus :public Bus {
-	bool seatList[21] = { 0 }; //0 ì´ ë¹ˆìë¦¬ ì¢Œì„ ì˜ˆë§¤ x, 1ì´ ì°¬ìë¦¬
+	bool seatList[21] = { 0 }; //0 ÀÌ ºóÀÚ¸® ÁÂ¼® ¿¹¸Å x, 1ÀÌ ÂùÀÚ¸®
 public:
 	PremiumBus(string dep) :Bus(dep) {
-		grade = "í”„ë¦¬ë¯¸ì—„";
+		grade = "ÇÁ¸®¹Ì¾ö";
 		seatCount = 21;
 		totalSeats = 21;
 	}
 	PremiumBus(string dep, string date) :Bus(dep, date) {
-		grade = "í”„ë¦¬ë¯¸ì—„";
+		grade = "ÇÁ¸®¹Ì¾ö";
 		seatCount = 21;
 		totalSeats = 21;
 	}
 	void decrease() {
 		if (seatCount == 0) {
-			std::cout << "ìë¦¬ê°€ ì—†ìŠµë‹ˆë‹¤." << std::endl;
+			std::cout << "ÀÚ¸®°¡ ¾ø½À´Ï´Ù." << std::endl;
 			return;
 		}
 		seatCount--;
-	}// 1ì”© ê°ì†Œ ìµœì†Œ 0
+	}// 1¾¿ °¨¼Ò ÃÖ¼Ò 0
 	void increase() {
 		if (seatCount == 21) {
-			std::cout << "ìµœëŒ€ ì¢Œì„ìˆ˜ ì´ˆê³¼" << std::endl;
+			std::cout << "ÃÖ´ë ÁÂ¼®¼ö ÃÊ°ú" << std::endl;
 			return;
 		}
 		seatCount++;
-	}// 1ì”© ì¦ê°€ ìµœëŒ€ 40  
+	}// 1¾¿ Áõ°¡ ÃÖ´ë 40  
 	int showSeat() {
 		system("cls");
-		std::cout << "ì¼ë°˜ ë²„ìŠ¤ ìë¦¬" << std::endl;
+		std::cout << "ÀÏ¹İ ¹ö½º ÀÚ¸®" << std::endl;
 		for (int i = 0; i < 21; i = i + 3) {
 			std::cout << " -" << (i + 1) / 10 << (i + 1) % 10 << "-" << " -" << (i + 2) / 10 << (i + 2) % 10 << "-" << " -" << (i + 3) / 10 << (i + 3) % 10 << "-" << std::endl;
 			std::cout << " | " << seatList[i] << "| " << "| " << seatList[i + 1] << "| " << "| " << seatList[i + 2] << "| " << std::endl;
@@ -159,13 +160,13 @@ public:
 
 		}
 		return 0;
-	}// ì¸ë±ìŠ¤ê°’ìœ¼ë¡œ ì¤„ êµ¬ë³„ index%4==0ì´ë©´ ì¤„ë°”ê¿ˆ
+	}// ÀÎµ¦½º°ªÀ¸·Î ÁÙ ±¸º° index%4==0ÀÌ¸é ÁÙ¹Ù²Ş
 	bool reserveSeat(int seatNum) {
-		if (seatList[seatNum] == 0) {	// ì˜ˆë§¤ ê°€ëŠ¥í•  ê²½ìš°
-			seatList[seatNum] = 1;		// ë§¤ì„ë˜ì—ˆë‹¤ëŠ” ëœ»ì¸ 1ë¡œ ë°”ê¾¸ê³ 
-			return true;				// true ë¦¬í„´
+		if (seatList[seatNum] == 0) {	// ¿¹¸Å °¡´ÉÇÒ °æ¿ì
+			seatList[seatNum] = 1;		// ¸Å¼®µÇ¾ú´Ù´Â ¶æÀÎ 1·Î ¹Ù²Ù°í
+			return true;				// true ¸®ÅÏ
 		}
-		else							// ì´ë¯¸ ì˜ˆë§¤ëœ ìë¦¬(1)ì´ë©´
-			return false;				// false ë¦¬í„´
+		else							// ÀÌ¹Ì ¿¹¸ÅµÈ ÀÚ¸®(1)ÀÌ¸é
+			return false;				// false ¸®ÅÏ
 	}
 };
