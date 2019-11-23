@@ -82,7 +82,7 @@ int main() {
 		ifstream in("savedInfo.txt"); //읽기모드
 
 		//해당번호 삭제 진행
-		while (in) {
+		while (!in.eof()) {
 			getline(in, line);
 			strTemp = line;
 			vector<string> line_vector = split(line, ' ');
@@ -95,8 +95,7 @@ int main() {
 
 			}
 			else {
-				strTemp += "\n";
-				out << strTemp;
+				out << strTemp << endl;
 			}
 
 		}
@@ -125,7 +124,7 @@ int main() {
 	dst << src.rdbuf();
 
 	src.close();
-	out.close();
+	dst.close();
 	system("pause");
 
 	return 0;
