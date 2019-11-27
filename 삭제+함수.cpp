@@ -111,7 +111,7 @@ struct info& RemoveInfo(struct info *Info, bool isExist) {
 	in.close();
 	ifstream in_("savedInfo.txt"); //읽기모드
 	//해당번호 삭제 진행
-//	num = 0; //지우고자하는 해당 번호
+
 	while (in_) {
 		getline(in_, line);
 		strTemp = line;
