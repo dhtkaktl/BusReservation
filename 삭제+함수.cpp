@@ -8,7 +8,8 @@
 
 using namespace std;
 struct info {
-	string  number, src, dst, date, grade, name, phone, seatSelect, time;
+	string src, dst, date, grade, name, phone, seatSelect, time;
+	int number;
 };
 // str(문자열)을 delimiter(' ')을 기준을 잘라서 배열에 넣어 주는 함수
 vector<string> split(string str, char delimiter) {
@@ -30,7 +31,7 @@ int main() {
 	struct info Info;
 	bool isExist = false;
 	RemoveInfo(&Info, isExist);
-	cout << Info.name << endl;
+	cout << Info.number << endl;
 	system("pause");
 	return 0;
 }
@@ -72,7 +73,6 @@ struct info& RemoveInfo(struct info *Info, bool isExist) {
 		}
 		if ((check_name == line_vector[1]) && (check_phonenumber == line_vector[2])) {
 			isExist = true;
-			Info->number = line_vector[0];
 			Info->name = line_vector[1];
 			Info->phone = line_vector[2];
 			Info->src = line_vector[3];
@@ -80,7 +80,7 @@ struct info& RemoveInfo(struct info *Info, bool isExist) {
 			Info->date = line_vector[5];
 			Info->time = line_vector[6];
 			Info->grade = line_vector[7];
-			Info->seatSelect = line_vector[8];
+			Info->seatSelect = line_vector[8]; 
 			++i;
 			++num;
 			cout << line << endl;
@@ -89,6 +89,7 @@ struct info& RemoveInfo(struct info *Info, bool isExist) {
 	if (isExist) {
 		cout << "\n취소하고 싶은 예매목록을 입력해주세요.(번호입력)" << endl;
 		cin >> num;
+		Info->number = num;
 		/*입력번호가 숫자가 아닐경우 예외처리
 		  숫자 0-9까지 지원*/
 		if (((char)num)>=48&&((char)num)<=57) {
@@ -110,6 +111,7 @@ struct info& RemoveInfo(struct info *Info, bool isExist) {
 	in.close();
 	ifstream in_("savedInfo.txt"); //읽기모드
 	//해당번호 삭제 진행
+//	num = 0; //지우고자하는 해당 번호
 	while (in_) {
 		getline(in_, line);
 		strTemp = line;
@@ -121,10 +123,14 @@ struct info& RemoveInfo(struct info *Info, bool isExist) {
 		if (line_vector.size() == 0) {
 			break;
 		}
-		if ((Info->name == line_vector[0]) && (Info->phone == line_vector[1]) && (Info->src == line_vector[2]) && (Info->dst == line_vector[3]) && (Info->date == line_vector[4]) && (Info->time == line_vector[5]) && (Info->grade == line_vector[6]) && (Info->seatSelect == line_vector[7])) {
 
+		if ((Info->name == line_vector[0]) && (Info->phone == line_vector[1])) {
 			isExist = true;
-
+			if (num == 0) num--;
+			else {
+				out << strTemp << endl;
+				num--;
+			}
 		}
 		else {
 			out << strTemp << endl;
@@ -132,7 +138,7 @@ struct info& RemoveInfo(struct info *Info, bool isExist) {
 
 	}
 	if (isExist) {
-		cout << "\n" << num << "번 취소가 완료되었습니다. " << endl;
+		cout << "\n" << Info->number << "번 취소가 완료되었습니다. " << endl;
 		
 	}
 
