@@ -23,18 +23,19 @@ vector<string> split(string str, char delimiter) {
 	return internal;
 }
 
-struct info RemoveInfo(struct info *Info, bool isExist);
+struct info& RemoveInfo(struct info *Info, bool isExist);
 
 //입력 한글 x
 int main() {
 	struct info Info;
 	bool isExist = false;
-	cout << RemoveInfo(&Info, isExist).name << endl;
+	RemoveInfo(&Info, isExist);
+	cout << Info.name << endl;
 	system("pause");
 	return 0;
 }
 
-struct info RemoveInfo(struct info *Info, bool isExist) {
+struct info& RemoveInfo(struct info *Info, bool isExist) {
 	int i = 0;
 	string strTemp;
 	isExist = false;
@@ -90,7 +91,7 @@ struct info RemoveInfo(struct info *Info, bool isExist) {
 		cin >> num;
 		/*입력번호가 숫자가 아닐경우 예외처리
 		  숫자 0-9까지 지원*/
-		if ((char)num<48||(char)num>57) {
+		if (((char)num)>=48&&((char)num)<=57) {
 			cout << "잘못 입력 하셨습니다." << endl;
 			cout << "예매취소를 종료합니다" << endl;
 			in.close();
