@@ -6,43 +6,49 @@
 #include <cstring>
 #include "Bus.cpp"
 #define MAX 3 // 하루당 총 버스 댓수
-#define FILENAME "Info.txt" // 중요1: 다른 이름의 파일로 테스트 해보고 싶으면 이 부분만 변경할것
-// 중요2: 테스트용 텍스트 파일 만들 때 9시 버스는 "9:00"이 아니라 "09:00"으로 할 것!
+#define FILENAME "Info.txt" // 예매 정보가 저장되는 텍스트 파일 이름(경로)
+// ㄴ주의: 테스트용 텍스트 파일 만들 때 예를 들어 9시 버스는 "9:00"이 아니라 "09:00"으로 할 것
+
+#define EMPTY_CIN cin.clear(); cin.ignore(INT_MAX, '\n'); // cin 버퍼를 비우는 코드(비정상적인 입력 처리용)
 
 using namespace std;
 
-struct info { // 예매취소 정보 저장할 구조체
+struct info { // 예매취소 정보 저장용 구조체
 	string  number, src, dst, date, grade, name, phone, seat, time;
 };
 
 void mainMenu(Bus* bus_array[][MAX]);
-// 시간표 출력 및 좌석 선택, 예매까지 다 하는.. 함수
-void showTable(Bus* bus_array[][MAX], int date_index, string grade);
-// 예매내역 저장 함수(출발지 도착지는 유성-서울로 고정함) 
-void saveInfo(Bus* bus_pointer, int seatNum);
+void showTable(Bus* bus_array[][MAX], int date_index, string grade); // 시간표 출력 및 좌석 선택, 예매까지 다 하는.. 함수
+void saveInfo(Bus* bus_pointer, int seatNum); // 예매내역 저장 함수(출발지 도착지는 유성-서울로 고정함) 
 void checkReservation(); // 예매확인 함수
-void RemoveInfo(struct info*); // 텍스트 파일에서 취소할 예매내역 지우는 함수
-vector<string> split(string str, char delimiter);
+void RemoveInfo(struct info*); // 텍스트 파일에서 취소할 예매내역을 지우는 함수
+vector<string> split(string str, char delimiter); // str을 delimiter를 기준으로 자른 토큰들을 벡터에 저장해 리턴
 
 int main() {
 
 	Bus* bus[7][MAX]; // 1주일 x 일일 총 버스 댓수
 	for (int i = 0; i < 7; i++) {
 		string date1 = "2019-12-";
-		string date2 = to_string(i+6); // 발표일인 12월 6일부터 1주일
+		string date2 = to_string(i+6); // 프로젝트 최종 발표일인 12월 6일부터 1주일
 		string sumString = date1 + date2;
-		bus[i][0] = new NormalBus("09:00", sumString); // 09:00으로 변경 문제 생기면 보고 ★
+		bus[i][0] = new NormalBus("09:00", sumString); // 09:00으로 변경(기존 "9:00")
 		bus[i][1] = new HonorsBus("12:00", sumString);
 		bus[i][2] = new PremiumBus("15:00", sumString);
 	}
 
-	// 이하 재용이 파트 - 함수로 전환?
+	// 이하 재용이 파트 - 함수화?
 	string line;
-	ifstream in(FILENAME);
-	if (!in.is_open()) {
-		cout << "파일을 찾을 수 없습니다!" << endl;
-		return 0;
+
+	ifstream test_in(FILENAME); // 파일 존재 여부 테스트용 입력스트림
+	if (!test_in.is_open()) { // 안 열리면(즉 없으면) FILENAME 경로로 공백 파일 생성
+		ofstream outFile;
+		outFile.open(FILENAME);
+		outFile.close();
 	}
+	test_in.close(); // 테스트용 인풋 스트림 닫음
+
+	ifstream in(FILENAME);
+
 	getline(in, line);
 	while (!in.eof()) {	// 텍스트파일 한줄씩 읽어서, ' ' 기준으로 자른 뒤 배열에 저장
 		vector<string> line_vector = split(line, ' ');
@@ -58,9 +64,8 @@ int main() {
 		if (line_vector.size() == 0)
 			break;
 	}
-
-	// 주 작동부(메인 메뉴)
-	mainMenu(bus);
+	
+	mainMenu(bus); // 주 작동부(메인 메뉴)
 
 }
 
@@ -71,12 +76,17 @@ void mainMenu(Bus* bus[][MAX]) {
 		cout << "2. 예매확인" << endl;
 		cout << "3. 예매취소" << endl;
 		cout << "4. 종료" << endl;
-		cout << "\n메뉴 번호 입력: ";
 
-		string inputGrade; // 버스예매에서 등급 선택할 때 사용
+		string inputGrade; // 버스예매시 등급 선택할 때 사용
 		int select;	// 다양한 선택에서 쓰이는 변수
 		int dateIndex; // 날짜 선택내역을 저장할 변수
-		cin >> select;
+		
+		while (true) {
+			cout << "\n메뉴 번호 입력: "; cin >> select;
+			if (1 <= select && select <= 4)	break;
+			cout << "잘못된 입력입니다. 다시 입력해주세요." << endl;
+			EMPTY_CIN
+		} EMPTY_CIN
 
 		system("cls");
 		switch (select) {
@@ -88,14 +98,18 @@ void mainMenu(Bus* bus[][MAX]) {
 				cout << "\n입력: "; cin >> select;
 				if (select == 1) break;
 				cout << "잘못된 입력입니다. 다시 입력해주세요." << endl;
-			}
+				EMPTY_CIN
+			} EMPTY_CIN
+
 			cout << "\n<도착지 선택>" << endl;
 			cout << "1. 서울" << endl;
 			while (true) {
 				cout << "\n입력: "; cin >> select;
 				if (select == 1) break;
 				cout << "잘못된 입력입니다. 다시 입력해주세요." << endl;
-			}
+				EMPTY_CIN
+			} EMPTY_CIN
+
 			cout << "\n<날짜 선택>" << endl;
 			cout << "1. 2019. 12. 6. 금" << endl;
 			cout << "2. 2019. 12. 7. 토" << endl;
@@ -108,7 +122,8 @@ void mainMenu(Bus* bus[][MAX]) {
 				cout << "\n입력: "; cin >> select;
 				if (1 <= select && select <= 7)	break;
 				cout << "잘못된 입력입니다. 다시 입력해주세요." << endl;
-			}
+				EMPTY_CIN
+			} EMPTY_CIN
 			dateIndex = select - 1; // 인덱스는 0부터 시작하므로
 
 			cout << "\n<등급 선택>" << endl;
@@ -120,23 +135,24 @@ void mainMenu(Bus* bus[][MAX]) {
 				cout << "\n조회하기: "; cin >> select;
 				if (1 <= select && select <= 4)	break;
 				cout << "잘못된 입력입니다. 다시 입력해주세요." << endl;
-			}
+				EMPTY_CIN
+			} EMPTY_CIN
+
 			switch (select) {
 			case 1:	inputGrade = "전체"; break;
 			case 2:	inputGrade = "Premium"; break;
 			case 3:	inputGrade = "Honor"; break;
 			case 4:	inputGrade = "Normal"; break;
 			}
-
-			showTable(bus, dateIndex, inputGrade); // 선택한 조건으로 배차 조회
-
-			// 버스 비회원등록(이름 전화번호 저장, 변수선언 및 저장) // 혜민이 파트
-			// 결제되었습니다 출력
+			
+			showTable(bus, dateIndex, inputGrade); // 위에서 선택한 조건들로 배차 조회부터 예매까지 진행
+			
 			system("pause");
-			break; // case 1 break
+			break;
 
 		case 2:	// 2. 예매확인
 			checkReservation();
+
 			system("pause");
 			break;
 
@@ -158,12 +174,7 @@ void mainMenu(Bus* bus[][MAX]) {
 
 		case 4: // 4. 종료
 			cout << "-- 프로그램이 종료되었습니다 --" << endl;
-			return; // return 하므로 break 없음
-
-		default: // 그 외 입력
-			cout << "잘못된 입력입니다. 다시 입력해주세요." << endl;
-			system("pause");
-			break;
+			return;
 		}
 	}
 }
@@ -190,8 +201,8 @@ void showTable(Bus* bus[][MAX], int date_index, string grade) { // 원래는 bus와 
 		}
 	}
 	for (int i = 0; i < count; i++) {
-		cout << "[" << i << "] " << selectBus[i]->getDep() << " " << selectBus[i]->getGrade() << " " << selectBus[i]->getSeatCount() << endl;
-	}
+		cout << i + 1 << ". " << selectBus[i]->getDep() << " " << selectBus[i]->getGrade() << " " << selectBus[i]->getSeatCount() << endl;
+	}		// 1번부터 뜨게 i + 1로 변경
 
 	/////////////////////////////////////////////////////////////////////////////////////
 
@@ -199,13 +210,14 @@ void showTable(Bus* bus[][MAX], int date_index, string grade) { // 원래는 bus와 
 
 	while (true) {
 		cout << "\n버스 번호 입력:"; cin >> busSelect;
-		if ((0 <= busSelect) && (busSelect < count)) break;
+		if ((1 <= busSelect) && (busSelect < count+1)) break; // 1번부터 출력됨에 맞춰 0->1, count->count+1
 		cout << "잘못된 입력입니다. 다시 입력해주세요." << endl;
-	}
+		EMPTY_CIN
+	} EMPTY_CIN
 
 	system("cls");
 	std::cout << "<좌석 선택>\n" << std::endl;
-	selectBus[busSelect]->showSeat(); // 좌석 출력
+	selectBus[--busSelect]->showSeat(); // 좌석 출력 // UI상으로는 1번부터 시작하나 실제 인덱스는 0부터 시작하므로 --busSelect
 
 	int seatSelect;
 	while (true) { // 예매가 성공할 때까지 도는 루프
@@ -213,7 +225,8 @@ void showTable(Bus* bus[][MAX], int date_index, string grade) { // 원래는 bus와 
 			cout << "좌석 번호 입력:"; cin >> seatSelect;
 			if ((1 <= seatSelect) && (seatSelect <= selectBus[busSelect]->getTotalSeats()))	break;
 			cout << "잘못된 입력입니다. 다시 입력해주세요.\n" << endl;
-		}
+			EMPTY_CIN
+		} EMPTY_CIN
 		if (selectBus[busSelect]->reserveSeat(seatSelect)) { // 입력받은 좌석번호로 예매 시도
 			// 예매한 버스 포인터와 좌석번호를 가지고 예매정보 저장 함수로 넘어감
 			saveInfo(selectBus[busSelect], seatSelect);
@@ -289,7 +302,7 @@ void checkReservation() {
 		// 입력 받은 이름&전화번호가 텍스트파일에 존재하지 않으면, 다시 입력받음 
 		if (!isExist) {
 			if (check_count != 3)
-				cout << "\n이름 혹은 전화번호를 잘못 입력하셨습니다. 다시 입력해주세요.(" << check_count << "/3)" << endl;
+				cout << "\n이름 혹은 전화번호를 잘못 입력하셨습니다. 다시 입력해주세요.(" << check_count << "/3)\n" << endl;
 			else {
 				cout << "\n3회 잘못 입력하셨습니다. 예매 확인을 종료합니다." << endl;
 				break;
@@ -316,7 +329,7 @@ void RemoveInfo(struct info *Info) {
 		return;
 	}
 	cout << "예매취소를 진행합니다. " << endl;
-	cout << "이름, 전화번호를 입력해주세요. " << endl;
+	cout << "이름, 전화번호를 입력해주세요.\n" << endl;
 	cout << "이름: "; cin >> check_name;
 	cout << "전화번호: ";  cin >> check_phonenumber;
 
@@ -324,7 +337,7 @@ void RemoveInfo(struct info *Info) {
 
 	/*콘솔 출력*/
 	while (in) {
-		string s_num = to_string(num);
+		string s_num = to_string(num+1); // 1번부터 출력되게 조정(num -> num+1)
 		getline(in, line);
 		line = s_num + "번" + " " + line;
 		if (in.eof()) {
@@ -344,17 +357,18 @@ void RemoveInfo(struct info *Info) {
 	if (isExist) {
 		while (true) {
 			cout << "\n취소할 건을 선택해주세요:"; cin >> select;
-			if (0 <= select && select < num) break;
+			if (1 <= select && select < num+1) break;  // 1번부터 출력되게 조정(0->1, num->num+1)
 			cout << "잘못된 입력입니다. 다시 입력해주세요." << endl;
-		}
+			EMPTY_CIN
+		} EMPTY_CIN
 	}
 	else {
-		cout << "--예매정보가 없습니다--.\n" << endl;
+		cout << "--예매정보가 없습니다--\n" << endl;
 		in.close();
 		return;
 	}
 
-	int count = select; // 추가
+	int count = select - 1;  // 1번부터 출력되게 조정(select 뒤에 -1 추가)
 	in.close();
 	ifstream in_(FILENAME); // 읽기모드
 
