@@ -5,7 +5,7 @@
 #include <fstream>
 #include <cstring>
 #include "Bus.cpp"
-#define MAX 3 // 하루당 총 버스 댓수
+#define MAX 8 // 하루당 총 버스 댓수
 #define FILENAME "Info.txt" // 예매 정보가 저장되는 텍스트 파일 이름(경로)
 // ㄴ주의: 테스트용 텍스트 파일 만들 때 예를 들어 9시 버스는 "9:00"이 아니라 "09:00"으로 할 것
 
@@ -17,6 +17,7 @@ struct info { // 예매취소 정보 저장용 구조체
 	string  number, src, dst, date, grade, name, phone, seat, time;
 };
 
+void setState(Bus* bus[][MAX]); // 텍스트 파일 읽어 배열 내 버스 객체들 상태 세팅
 void mainMenu(Bus* bus_array[][MAX]);
 void showTable(Bus* bus_array[][MAX], int date_index, string grade); // 시간표 출력 및 좌석 선택, 예매까지 다 하는.. 함수
 void saveInfo(Bus* bus_pointer, int seatNum); // 예매내역 저장 함수(출발지 도착지는 유성-서울로 고정함) 
@@ -31,12 +32,24 @@ int main() {
 		string date1 = "2019-12-";
 		string date2 = to_string(i+6); // 프로젝트 최종 발표일인 12월 6일부터 1주일
 		string sumString = date1 + date2;
-		bus[i][0] = new NormalBus("09:00", sumString); // 09:00으로 변경(기존 "9:00")
-		bus[i][1] = new HonorsBus("12:00", sumString);
-		bus[i][2] = new PremiumBus("15:00", sumString);
+		bus[i][0] = new NormalBus("08:00", sumString);
+		bus[i][1] = new HonorsBus("10:00", sumString);
+		bus[i][2] = new PremiumBus("12:00", sumString);
+		bus[i][3] = new NormalBus("14:00", sumString);
+		bus[i][4] = new HonorsBus("16:00", sumString);
+		bus[i][5] = new PremiumBus("18:00", sumString);
+		bus[i][6] = new NormalBus("20:00", sumString);
+		bus[i][7] = new HonorsBus("22:00", sumString);
 	}
 
-	// 이하 재용이 파트 - 함수화?
+	setState(bus); // 버스 객체들의 상태 세팅(버스별 잔여 좌석수, 좌석 현황)
+	
+	mainMenu(bus); // 주 작동부(메인 메뉴)
+
+}
+
+void setState(Bus* bus[][MAX]) {
+
 	string line;
 
 	ifstream test_in(FILENAME); // 파일 존재 여부 테스트용 입력스트림
@@ -64,18 +77,16 @@ int main() {
 		if (line_vector.size() == 0)
 			break;
 	}
-	
-	mainMenu(bus); // 주 작동부(메인 메뉴)
 
 }
 
 void mainMenu(Bus* bus[][MAX]) {
 	while (true) {
 		system("cls");
-		cout << "1. 버스예매" << endl;
-		cout << "2. 예매확인" << endl;
-		cout << "3. 예매취소" << endl;
-		cout << "4. 종료" << endl;
+		cout << "1. 버스 예매" << endl;
+		cout << "2. 예매 확인" << endl;
+		cout << "3. 예매 취소" << endl;
+		cout << "4. 프로그램 종료" << endl;
 
 		string inputGrade; // 버스예매시 등급 선택할 때 사용
 		int select;	// 다양한 선택에서 쓰이는 변수
